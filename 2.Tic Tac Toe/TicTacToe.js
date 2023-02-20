@@ -20,7 +20,7 @@ const createGameStatusText = () => {
 
   if (isFinish) return `Winner is ${player === 'X' ? 'O' : 'X'}`;
 
-  if (!board.filter(element => element === '').length) return `Draw`;
+  if (board.every(element => element !== '')) return `Draw`;
 
   return `Next Player: ${player}`;
 };
@@ -57,9 +57,9 @@ const TicTacToe = $root => {
 
     const board = state.board.map((_, idx) => (idx === +e.target.dataset.id ? state.player : _));
 
-    const isFinish = !!WINNER_CONDITIONS.filter(
+    const isFinish = WINNER_CONDITIONS.some(
       ([a, b, c]) => board[a] !== '' && board[a] === board[b] && board[b] === board[c]
-    ).length;
+    );
 
     setState({
       board,
