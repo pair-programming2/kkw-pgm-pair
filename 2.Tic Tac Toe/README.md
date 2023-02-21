@@ -15,9 +15,9 @@ const isFinish = !!WINNER_CONDITIONS.filter(([a, b, c]) => (board[a] === board[b
 즉, 자바스크립트의 Anti Pattern 이다.
 
 ```js
-const isFinish = !!WINNER_CONDITIONS.filter(
+const isFinish = WINNER_CONDITIONS.some(
   ([a, b, c]) => board[a] !== '' && board[a] === board[b] && board[b] === board[c]
-).length;
+);
 ```
 
 이를 해결 하기 위해 상기 코드로 변경을 했다.
