@@ -34,7 +34,7 @@ const createGameStatusText = () => {
 
   if (isFinish) return `Winner is ${player === 'X' ? 'O' : 'X'}`;
 
-  if (!board.filter(element => element === '').length) return `Draw`;
+  if (board.every(element => element !== '').length) return `Draw`;
 
   return `Next Player: ${player}`;
 };
@@ -44,8 +44,8 @@ const createGameStatusText = () => {
 
 ### 상태(state)와 변수의 차이점은 무엇인가?
 
-- 상태는 리렌더링에 영향을 주는 자바스크립트 데이터 또는 객체이다.
-- 변수는 리렌더링에 영향을 주지 않는 자바스크립트 데이터 또는 객체이다.
+- 상태는 리렌더링에 영향을 주는 변수이다.
+- 변수는 리렌더링에 영향을 주지 않는다.
 
 ### 모든 요소를 #root 요소에 동적 생성하는 방법을 사용할 때 장점과 단점은 무엇인가?
 
