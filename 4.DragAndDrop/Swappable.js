@@ -1,10 +1,5 @@
-// https://githut.info
 const languages = ['JavaScript', 'Java', 'Python', 'CSS', 'PHP', 'Ruby', 'C++', 'C', 'Shell', 'C#'];
 
-// 피셔- 예이츠 알고리즘
-// 배열의 마지막부터 처음까지 반복
-// 현재 index의 값과, 무작위로 생성된 index의 값을 swap한다.
-// 1 2 3 4 5 가 있으면 마지막 놈부터 랜덤으로 바까줌
 const fisherYatesShuffle = array => {
   let count = array.length - 1;
 
@@ -20,11 +15,13 @@ const fisherYatesShuffle = array => {
 };
 
 const Swappable = $swappable => {
+  let dragSrc = null;
+
   // prettier-ignore
   $swappable.innerHTML = `
 		<ul class="draggable-list">
-		${fisherYatesShuffle([...languages]).map((language,idx)=>`
-			<li class="right">
+		${fisherYatesShuffle([...languages]).map((language, idx)=>`
+			<li class="${language === languages[idx] ? 'right' : 'wrong'}">
 				<div class="seq">${idx+1}</div>
 				<div class="draggable" draggable="true">
 					<p class="language-name">${language}</p>
@@ -32,52 +29,53 @@ const Swappable = $swappable => {
 				</div>
 			</li>
 		`).join("")}
-		</ul>
-`
+		</ul>`
+
   const $draggableList = $swappable.querySelector('.draggable-list');
 
-  const checkRank = () => {
-    [...$draggableList.children].forEach((dragItem, index) => {
-      const isRight = dragItem.querySelector('.language-name').textContent === languages[index];
-      dragItem.classList.toggle('right', isRight);
-      dragItem.classList.toggle('wrong', !isRight);
-    });
+  const checkRank = $li => {
+    const index = $li.querySelector('.seq').textContent - 1;
+    const isRight = $li.querySelector('.language-name').textContent === languages[index];
+
+    $li.classList.toggle('right', isRight);
+    $li.classList.toggle('wrong', !isRight);
   };
 
-  checkRank();
+  $draggableList.addEventListener('dragstart', e => {
+    dragSrc = e.target;
 
-  let dragSrc = null;
-  [...$draggableList.children].forEach($li => {
-    // let dragSrc;
-    $li.addEventListener('dragstart', e => {
-      dragSrc = e.target;
-      e.dataTransfer.setData('text/html', e.target.innerHTML);
-      e.dataTransfer.dropEffect = 'move';
-    });
+    e.dataTransfer.setData('text/html', e.target.innerHTML);
 
-    $li.addEventListener('dragover', e => {
-      e.preventDefault();
-      e.target.parentNode.classList.add('over');
-    });
+    e.dataTransfer.dropEffect = 'move';
+  });
 
-    $li.addEventListener('dragleave', e => {
-      e.target.parentNode.classList.remove('over');
-    });
+  $draggableList.addEventListener('dragover', e => {
+    e.preventDefault();
 
-    $li.addEventListener('drop', e => {
-      e.stopPropagation();
-      const element = e.target.classList.contains('draggable')
-        ? e.target
-        : e.target.closest('li').querySelector('.draggable');
+    e.target.parentNode.classList.add('over');
+  });
 
-      if (dragSrc !== element) {
-        dragSrc.innerHTML = element.innerHTML;
-        element.innerHTML = e.dataTransfer.getData('text/html');
-      }
-      element.parentNode.classList.remove('over');
-      checkRank();
-      return false;
-    });
+  $draggableList.addEventListener('dragleave', e => {
+    e.preventDefault();
+
+    e.target.parentNode.classList.remove('over');
+  });
+
+  $draggableList.addEventListener('drop', e => {
+    // e.stopPropagation();
+    e.preventDefault();
+
+    if (!e.target.matches('.draggable')) return;
+
+    if (dragSrc !== e.target) {
+      dragSrc.innerHTML = e.target.innerHTML;
+      e.target.innerHTML = e.dataTransfer.getData('text/html');
+    }
+
+    e.target.parentNode.classList.remove('over');
+
+    checkRank(dragSrc.parentNode);
+    checkRank(e.target.parentNode);
   });
 };
 
