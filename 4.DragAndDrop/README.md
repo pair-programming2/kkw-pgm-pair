@@ -31,7 +31,7 @@ B F -> C E G D H A F
 B -> C E G D H A F B
 
 - 결과를 저장할 별도의 공간이 필요
-- 원본 배열에서 제거되는 부분 splice와 같은 처리 필요, O(N \* N)
+- 원본 배열에서 제거되는 부분 splice와 같은 처리 필요, `O(N * N)`
 
 ### 현대적인 방법
 
@@ -60,7 +60,7 @@ G -> E D C A H B F
 -> G E D C A H B F
 
 - 원본 배열에서 swap 일어나서 별도의 공간 불필요
-- splice와 같은 처리 불필요, O(N)
+- splice와 같은 처리 불필요, `O(N)`
 
 ### 구현
 
