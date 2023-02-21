@@ -9,8 +9,10 @@ const fisherYatesShuffle = array => {
     const temp = array[count];
     array[count] = array[index];
     array[index] = temp;
+
     count -= 1;
   }
+
   return array;
 };
 
@@ -20,15 +22,15 @@ const Swappable = $swappable => {
   // prettier-ignore
   $swappable.innerHTML = `
 		<ul class="draggable-list">
-		${fisherYatesShuffle([...languages]).map((language, idx)=>`
-			<li class="${language === languages[idx] ? 'right' : 'wrong'}">
-				<div class="seq">${idx+1}</div>
-				<div class="draggable" draggable="true">
-					<p class="language-name">${language}</p>
-					<i class="bx bx-menu"></i>
-				</div>
-			</li>
-		`).join("")}
+      ${fisherYatesShuffle([...languages]).map((language, idx)=>`
+        <li class="${language === languages[idx] ? 'right' : 'wrong'}">
+          <div class="seq">${idx+1}</div>
+          <div class="draggable" draggable="true">
+            <p class="language-name">${language}</p>
+            <i class="bx bx-menu"></i>
+          </div>
+        </li>
+      `).join("")}
 		</ul>`
 
   const $draggableList = $swappable.querySelector('.draggable-list');
@@ -49,6 +51,7 @@ const Swappable = $swappable => {
     e.dataTransfer.dropEffect = 'move';
   });
 
+  // enter
   $draggableList.addEventListener('dragover', e => {
     e.preventDefault();
 
