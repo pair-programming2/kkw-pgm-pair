@@ -35,7 +35,6 @@ class Accordion {
 
   render() {
     const { menuList } = this;
-    console.log(menuList);
 
     // prettier-ignore
     this.$container.innerHTML = menuList.map(({id, title, subMenu, isOpen})=> `

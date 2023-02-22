@@ -1,19 +1,18 @@
 const languages = ['JavaScript', 'Java', 'Python', 'CSS', 'PHP', 'Ruby', 'C++', 'C', 'Shell', 'C#'];
 
 const fisherYatesShuffle = array => {
-  let count = array.length - 1;
+  const _array = [...array];
+  let endOfRange = _array.length - 1;
 
-  while (count) {
-    const index = Math.floor(Math.random() * count);
+  while (endOfRange) {
+    const randomNumber = Math.floor(Math.random() * endOfRange);
 
-    const temp = array[count];
-    array[count] = array[index];
-    array[index] = temp;
+    [_array[endOfRange], _array[randomNumber]] = [_array[randomNumber], _array[endOfRange]];
 
-    count -= 1;
+    endOfRange -= 1;
   }
 
-  return array;
+  return _array;
 };
 
 const Swappable = $swappable => {
@@ -22,7 +21,7 @@ const Swappable = $swappable => {
   // prettier-ignore
   $swappable.innerHTML = `
 		<ul class="draggable-list">
-      ${fisherYatesShuffle([...languages]).map((language, idx)=>`
+      ${fisherYatesShuffle(languages).map((language, idx)=>`
         <li class="${language === languages[idx] ? 'right' : 'wrong'}">
           <div class="seq">${idx+1}</div>
           <div class="draggable" draggable="true">
@@ -45,40 +44,30 @@ const Swappable = $swappable => {
 
   $draggableList.addEventListener('dragstart', e => {
     dragSrc = e.target;
-
-    e.dataTransfer.setData('text/html', e.target.innerHTML);
-
-    e.dataTransfer.dropEffect = 'move';
   });
 
-  // enter
   $draggableList.addEventListener('dragover', e => {
     e.preventDefault();
+  });
 
-    e.target.parentNode.classList.add('over');
+  $draggableList.addEventListener('dragenter', e => {
+    e.target.closest('li')?.classList.toggle('over');
   });
 
   $draggableList.addEventListener('dragleave', e => {
-    e.preventDefault();
-
-    e.target.parentNode.classList.remove('over');
+    e.target.closest('li')?.classList.toggle('over');
   });
 
   $draggableList.addEventListener('drop', e => {
-    // e.stopPropagation();
-    e.preventDefault();
+    e.target.closest('li')?.classList.remove('over');
 
-    if (!e.target.matches('.draggable')) return;
+    const $draggable = e.target.closest('.draggable');
 
-    if (dragSrc !== e.target) {
-      dragSrc.innerHTML = e.target.innerHTML;
-      e.target.innerHTML = e.dataTransfer.getData('text/html');
-    }
+    if (!$draggable || dragSrc === e.target) return;
 
-    e.target.parentNode.classList.remove('over');
+    [dragSrc.innerHTML, $draggable.innerHTML] = [$draggable.innerHTML, dragSrc.innerHTML];
 
-    checkRank(dragSrc.parentNode);
-    checkRank(e.target.parentNode);
+    [dragSrc.parentNode, $draggable.parentNode].forEach(checkRank);
   });
 };
 

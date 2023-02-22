@@ -1,0 +1,16 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Open Sans';
+  font-weight: 300;
+}
+.container {
+  display: flex;
+  padding: 15px;
+}
+#tree-navigation {
+  width: 200px;
+}
