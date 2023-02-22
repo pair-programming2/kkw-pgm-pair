@@ -150,7 +150,7 @@ none, copy, link, move 값 중 하나에 효과를 나타낼 수 있다.
 
 ## 리팩토링
 
-### `dragover` 대신 `dragenter` 사용
+### 1️⃣`dragover` 대신 `dragenter` 사용
 
 ```js
 $draggableList.addEventListener('dragover', e => {
@@ -171,3 +171,35 @@ $draggableList.addEventListener('dragenter', e => {
 ```
 
 `dragenter`는 한 번만 발생한다.
+
+### 2️⃣`dataTransfer` 제거
+
+```js
+$draggableList.addEventListener('dragstart', e => {
+  ...
+  e.dataTransfer.setData('text/html', e.target.innerHTML);
+  ...
+})
+
+$draggableList.addEventListener('drop', e => {
+  ...
+  $draggable.innerHTML = e.dataTransfer.getData('text/html');
+  ...
+})
+```
+
+리팩토링 전에는 `dragstart`와 `drop`에서 `dataTransfer.setData()`와 `dataTransfer.getData()`를 이용하여 드래그를 시작한 요소를 저장하고 참조하는 방식을 사용했다. 그러나 `dataTransfer` 객체는 파일 작업의 용도로 사용되므로 관련 로직을 제거하고 함수 내의 전역 변수인 `dragSrc`를 사용했다.
+
+```js
+let dragSrc = null;
+
+$draggableList.addEventListener('dragstart', e => {
+    dragSrc = e.target;
+});
+
+$draggableList.addEventListener('drop', e => {
+  ...
+  [dragSrc.innerHTML, $draggable.innerHTML] = [$draggable.innerHTML, dragSrc.innerHTML];
+  ...
+});
+```

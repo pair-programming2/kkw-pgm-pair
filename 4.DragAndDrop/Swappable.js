@@ -44,9 +44,6 @@ const Swappable = $swappable => {
 
   $draggableList.addEventListener('dragstart', e => {
     dragSrc = e.target;
-
-    e.dataTransfer.setData('text/html', e.target.innerHTML);
-    e.dataTransfer.dropEffect = 'move';
   });
 
   $draggableList.addEventListener('dragover', e => {
@@ -54,22 +51,23 @@ const Swappable = $swappable => {
   });
 
   $draggableList.addEventListener('dragenter', e => {
-    e.target.parentNode.classList.add('over');
+    e.target.closest('li')?.classList.toggle('over');
   });
 
   $draggableList.addEventListener('dragleave', e => {
-    e.target.parentNode.classList.remove('over');
+    e.target.closest('li')?.classList.toggle('over');
   });
 
   $draggableList.addEventListener('drop', e => {
-    e.target.parentNode.classList.remove('over');
+    e.target.closest('li')?.classList.remove('over');
 
-    if (!e.target.matches('.draggable') || dragSrc === e.target) return;
+    const $draggable = e.target.closest('.draggable');
 
-    dragSrc.innerHTML = e.target.innerHTML;
-    e.target.innerHTML = e.dataTransfer.getData('text/html');
+    if (!$draggable || dragSrc === e.target) return;
 
-    [dragSrc.parentNode, e.target.parentNode].forEach(checkRank);
+    [dragSrc.innerHTML, $draggable.innerHTML] = [$draggable.innerHTML, dragSrc.innerHTML];
+
+    [dragSrc.parentNode, $draggable.parentNode].forEach(checkRank);
   });
 };
 

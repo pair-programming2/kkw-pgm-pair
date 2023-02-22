@@ -1,0 +1,38 @@
+.tree-container {
+  padding: 0;
+  margin: 0;
+}
+.subtree-container {
+  padding-left: 16px;
+}
+.subtree-container.hide {
+  display: none;
+}
+.tree-node {
+  list-style-type: none;
+}
+.tree-node a {
+  display: inline-block;
+  width: 100%;
+  margin: 2px 0;
+  color: #000;
+  text-decoration: none;
+}
+.tree-node a:hover,
+.tree-content.selected {
+  text-decoration: underline;
+}
+.tree-switcher {
+  display: inline-block;
+  width: 14px;
+}
+.tree-switcher:before {
+  content: '\25B6';
+}
+.tree-switcher.expand:before {
+  display: inline-block;
+  transform: rotate(90deg);
+}
+.tree-switcher.noop:before {
+  content: none;
+}
