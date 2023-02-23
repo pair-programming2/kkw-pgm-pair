@@ -51,10 +51,14 @@ const Swappable = $swappable => {
   });
 
   $draggableList.addEventListener('dragenter', e => {
+    e.preventDefault();
+
     e.target.closest('li')?.classList.toggle('over');
   });
 
   $draggableList.addEventListener('dragleave', e => {
+    e.preventDefault();
+
     e.target.closest('li')?.classList.toggle('over');
   });
 

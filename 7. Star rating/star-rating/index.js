@@ -2,10 +2,6 @@ const $link = [...document.querySelectorAll('link')].at(-1);
 
 $link.insertAdjacentHTML('afterend', '<link href="star-rating/theme.css" rel="stylesheet" />');
 
-// star 요소에 마우스 올리면 해당 요소 포함 이전 요소 색상 #a7a7a7 mouseover
-// star-rating 요소에서 마우스가 벗어나면 모든 star 요소의 color를 변경(#dcdcdc)한다. mouseout
-// 특정 star 요소를 클릭하면 해당 star 요소와 이전 star 요소 모두 color를 변경(#db5b33)한다.
-// 특정 star 요소를 클릭하면 star 요소의 rating이 결정된다. rating이 결정되면 커스텀 이벤트 'rating-change'를 통해 외부로 방출한다. 이를 캐치해 화면에 표시한다.
 const StarRating = $container => {
   const { maxRating } = $container.dataset;
 
@@ -15,7 +11,6 @@ const StarRating = $container => {
     </div>
   `;
 
-  // previousElementSibiling
   const $icons = [...$container.querySelectorAll('i.bxs-star')];
 
   const hover = $icon => {
@@ -26,9 +21,23 @@ const StarRating = $container => {
     hover($icon.previousElementSibling);
   };
 
-  const leave = () => {
+  const select = ($icon, rating) => {
+    if (!$icon) {
+      const customEvent = new CustomEvent('rating-change', {
+        detail: rating,
+      });
+
+      return $container.dispatchEvent(customEvent);
+    }
+
+    $icon.classList.add('selected');
+
+    select($icon.previousElementSibling, rating + 1);
+  };
+
+  const loopAndRemoveClass = className => {
     $icons.forEach($icon => {
-      $icon.classList.remove('hovered');
+      $icon.classList.remove(className);
     });
   };
 
@@ -41,7 +50,15 @@ const StarRating = $container => {
   $container.addEventListener('mouseout', e => {
     if (e.target.matches('.star-rating')) return;
 
-    leave();
+    loopAndRemoveClass('hovered');
+  });
+
+  $container.addEventListener('click', e => {
+    if (!e.target.matches('i.bxs-star')) return;
+
+    loopAndRemoveClass('selected');
+
+    select(e.target, 0);
   });
 };
 

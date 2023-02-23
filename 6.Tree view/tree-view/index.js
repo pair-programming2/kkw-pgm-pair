@@ -1,20 +1,24 @@
 class TreeView {
-  constructor($container, tree) {
-    this.$container = $container;
-    this.tree = tree;
+  #$container = null;
 
-    this.addEventHandler();
-    this.render();
+  #tree = [];
+
+  constructor($container, tree) {
+    this.#$container = $container;
+    this.#tree = tree;
+
+    this.#addEventHandler();
+    this.#render();
   }
 
   on(type, eventHandler) {
     if (!['select', 'expand', 'collapse'].includes(type)) throw new Error('잘못된 이벤트 타입입니다.');
 
-    this.$container.addEventListener(type, eventHandler);
+    this.#$container.addEventListener(type, eventHandler);
   }
 
-  addEventHandler() {
-    this.$container.addEventListener('click', e => {
+  #addEventHandler() {
+    this.#$container.addEventListener('click', e => {
       const $a = e.target.closest('a');
 
       if (!$a) return;
@@ -25,28 +29,28 @@ class TreeView {
         detail: { name },
       });
 
-      this.$container.dispatchEvent(customEvent);
+      this.#$container.dispatchEvent(customEvent);
     });
   }
 
-  setState(newState) {
-    this.tree = newState;
+  #setState(newState) {
+    this.#tree = newState;
 
-    this.render();
+    this.#render();
   }
 
-  createChildrenNode({ children, isOpen }) {
+  #createChildrenNode({ children, isOpen }) {
     if (children.length === 0) return '';
 
     // prettier-ignore
     return `
       <ul class="subtree-container ${isOpen ? '' : 'hide'}">
-        ${this.createDomString(children)}
+        ${this.#createDomString(children)}
       </ul>
     `
   }
 
-  createDomString(subTree) {
+  #createDomString(subTree) {
     // prettier-ignore
     return subTree.map(({name, children = [], isOpen = null}) => `
       <li class="tree-node">
@@ -54,32 +58,32 @@ class TreeView {
           <span class="tree-switcher ${isOpen === null ? 'noop' : isOpen ? 'expand' : 'collapse'}"></span>
           <span class="tree-content">${name}</span>
         </a>
-        ${this.createChildrenNode({children, isOpen})}
+        ${this.#createChildrenNode({children, isOpen})}
       </li>
     `).join("");
   }
 
-  render() {
+  #render() {
     // prettier-ignore
-    this.$container.innerHTML = `
+    this.#$container.innerHTML = `
       <ul class="tree-container">
-        ${this.createDomString(this.tree)}
+        ${this.#createDomString(this.#tree)}
       </ul>
     `
   }
 
-  travelAndToggle(subTree, targetName) {
-    return subTree.map(node =>
-      node.name === targetName
-        ? { ...node, isOpen: !node.isOpen, children: this.travelAndToggle(node.children ?? [], targetName) }
-        : { ...node, children: this.travelAndToggle(node.children ?? [], targetName) }
-    );
+  #travelAndToggle(subTree, targetName) {
+    return subTree.map(node => ({
+      ...node,
+      isOpen: node.name === targetName ? !node.isOpen : node.isOpen,
+      children: this.#travelAndToggle(node.children ?? [], targetName),
+    }));
   }
 
   switch(targetName) {
-    const updatedTree = this.travelAndToggle(this.tree, targetName);
+    const updatedTree = this.#travelAndToggle(this.#tree, targetName);
 
-    this.setState(updatedTree);
+    this.#setState(updatedTree);
   }
 }
 

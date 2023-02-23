@@ -78,18 +78,18 @@ for i from n−1 downto 1 do
 
 ```js
 const fisherYatesShuffle = array => {
-  let count = array.length - 1;
+  const _array = [...array];
+  let endOfRange = _array.length - 1;
 
-  while (count) {
-    // count = 8, 0 <= index < 8
-    const index = Math.floor(Math.random() * count);
+  while (endOfRange) {
+    const randomNumber = Math.floor(Math.random() * endOfRange);
 
-    const temp = array[count];
-    array[count] = array[index];
-    array[index] = temp;
-    count -= 1;
+    [_array[endOfRange], _array[randomNumber]] = [_array[randomNumber], _array[endOfRange]];
+
+    endOfRange -= 1;
   }
-  return array;
+
+  return _array;
 };
 ```
 
