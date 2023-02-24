@@ -41,7 +41,7 @@ const Swappable = $swappable => {
     $li.classList.toggle('right', isRight);
     $li.classList.toggle('wrong', !isRight);
   };
-  const isDragInLi = false;
+  let isDragInLi = false;
   $draggableList.addEventListener('dragstart', e => {
     dragSrc = e.target;
   });
@@ -53,13 +53,28 @@ const Swappable = $swappable => {
   $draggableList.addEventListener('dragenter', e => {
     e.preventDefault();
 
-    e.target.closest('li')?.classList.toggle('over');
+    // 리팩토링 필요 add remove로 동작은 함
+    isDragInLi = !e.target.closest('.seq') && e.target.closest('.over');
+
+    console.log(isDragInLi);
+
+    e.target.closest('li')?.classList.add('over');
   });
 
   $draggableList.addEventListener('dragleave', e => {
     e.preventDefault();
 
-    e.target.closest('li')?.classList.toggle('over');
+    console.log('leave', isDragInLi);
+    // 리팩토링 필요 add remove로 동작은 함
+    if (isDragInLi || e.target.closest('.seq')) {
+      console.log('ifLeave', isDragInLi);
+
+      isDragInLi = null;
+      console.log('ifLeave NULL', isDragInLi);
+
+      return;
+    }
+    e.target.closest('li')?.classList.remove('over');
   });
 
   $draggableList.addEventListener('drop', e => {
