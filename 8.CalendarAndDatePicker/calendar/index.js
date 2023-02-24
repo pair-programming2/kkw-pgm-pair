@@ -1,3 +1,6 @@
+const $link = [...document.querySelectorAll('link')].at(-1);
+$link.insertAdjacentHTML('afterend', '<link href="./calendar/style.css" rel="stylesheet" />');
+
 const DAY_OF_THE_WEEK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS_OF_YEAR = [
   'January',
@@ -13,30 +16,26 @@ const MONTHS_OF_YEAR = [
   'November',
   'December',
 ];
+const TODAY = new Date();
+const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = [TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate()];
 
-const today = new Date();
-const [todayYear, todayMonth, todayDay] = [today.getFullYear(), today.getMonth(), today.getDate()];
+const isToday = ({ year, month, day }) =>
+  year === TODAY_YEAR && month === TODAY_MONTH && day === TODAY_DAY ? 'today' : '';
 
-const isToday = ({ expressYear, expressMonth, targetDay }) =>
-  expressYear === todayYear && expressMonth === todayMonth && targetDay === todayDay;
+const isSunDay = ({ year, month, day }) => (new Date(year, month, day).getDay() === 0 ? 'sunday' : '');
 
-const isSunDay = ({ expressYear, expressMonth, targetDay }) =>
-  new Date(expressYear, expressMonth, targetDay).getDay() === 0;
+const getCreatedCalendar = ({ year, month }) => {
+  const date = new Date(year, month);
+  const [thisYear, thisMonth] = [date.getFullYear(), date.getMonth()];
 
-const getCreatedCalendar = ({ year, month, day }) => {
-  const expressDate = new Date(year, month, day);
-  const [expressYear, expressMonth, expressDay] = [
-    expressDate.getFullYear(),
-    expressDate.getMonth(),
-    expressDate.getDate(),
-  ];
+  const startWeekDay = new Date(thisYear, thisMonth, 1).getDay();
 
-  const startWeekDay = new Date(expressYear, expressMonth, 1).getDay();
   const [endDay, endWeekDay] = [
-    new Date(expressYear, expressMonth + 1, 0).getDate(),
-    new Date(expressYear, expressMonth + 1, 0).getDay(),
+    new Date(thisYear, thisMonth + 1, 0).getDate(),
+    new Date(thisYear, thisMonth + 1, 0).getDay(),
   ];
-  const endDateOfPrevMonth = new Date(expressYear, expressMonth, 0).getDate();
+
+  const endDateOfPrevMonth = new Date(thisYear, thisMonth, 0).getDate();
 
   const lastWeekOfPrevMonth = Array.from(
     { length: startWeekDay },
@@ -49,97 +48,127 @@ const getCreatedCalendar = ({ year, month, day }) => {
     WeeksOfThisMonth,
     lastWeekOfPrevMonth,
     firstWeekOfNextMonth,
-    expressMonth,
-    expressYear,
-    expressDay,
+    year: thisYear,
+    month: thisMonth,
   };
 };
 
-const Calendar = $container => {
-  const $calendar = document.createElement('div');
-  $calendar.classList.add('calendar', 'hide');
-  $container.appendChild($calendar);
+class Calendar {
+  constructor($container) {
+    this.$container = $container;
+    this.$calendar = document.createElement('div');
+    this.state = {
+      year: TODAY_YEAR,
+      month: TODAY_MONTH,
+      selectedDate: [],
+    };
 
-  let state = {
-    year: todayYear,
-    month: todayMonth,
-    day: todayDay,
-  };
+    this.$calendar.classList.add('calendar', 'hide');
+    this.$calendar.style.setProperty('--calendar-size', '300px');
 
-  // prettier-ignore
-  const render = () => {
-    const { 
-      lastWeekOfPrevMonth, 
-      WeeksOfThisMonth, 
-      firstWeekOfNextMonth, 
-			expressYear,
-			expressMonth,
-			expressDay,
-    } = getCreatedCalendar(state);
+    this.$container.appendChild(this.$calendar);
 
-// prettier-ignore
-    $calendar.innerHTML = `
+    this.addEventHandler();
+    this.render();
+  }
+
+  isSelect({ year, month, day }) {
+    const { selectedDate } = this.state;
+    const [_year, _month, _day] = selectedDate;
+
+    return _year === year && _month === month && _day === day ? 'select' : '';
+  }
+
+  setState(newState) {
+    this.state = { ...this.state, ...newState };
+
+    this.render();
+  }
+
+  render() {
+    const { lastWeekOfPrevMonth, WeeksOfThisMonth, firstWeekOfNextMonth, year, month } = getCreatedCalendar(this.state);
+
+    const { isSelect } = this;
+    const that = this;
+
+    // prettier-ignore
+    this.$calendar.innerHTML = `
       <div class="calendar-nav">
         <button type="button" class="btn--prev">◀️</button>
           <div class="date-info">
-            <p>${MONTHS_OF_YEAR[expressMonth]}</p>
-            <span>${expressYear}</span>
+            <p class="months">${MONTHS_OF_YEAR[month]}</p>
+            <span class="year">${year}</span>
           </div>
         <button type="button" class="btn--next">▶️</button>
       </div>
       <div class="calendar-grid">
-        ${DAY_OF_THE_WEEK.map(weekDay => `<span class="blur">${weekDay}</span>`).join('')}
-        ${lastWeekOfPrevMonth.map(day => `<span class="blur day" data-year="${expressYear}" data-month="${expressMonth - 1}">${day}</span>`).join('')}
-        ${WeeksOfThisMonth.map(day => `<span class="${isToday({expressYear, expressMonth, targetDay: day})? 'today' : ""}${isSunDay({expressYear, expressMonth, targetDay: day}) ? 'sunday' : ''} day" data-year="${expressYear}" data-month="${expressMonth}">${day}</span>`).join('')}
-        ${firstWeekOfNextMonth.map(day => `<span class="blur day" data-year="${expressYear}" data-month="${expressMonth + 1}">${day}</span>`).join('')}
+        ${DAY_OF_THE_WEEK.map(weekDay => `<span class="week-day">${weekDay}</span>`).join('')}
+        ${lastWeekOfPrevMonth.map(day => `<span class="blur day ${isSelect.call(that, { year, month, day })}" data-time-seq="prev">${day}</span>`).join('')}
+        ${WeeksOfThisMonth.map(day => 
+          `<span class="${isToday({year, month, day})} ${isSunDay({year, month, day})} day ${isSelect.call(that, { year, month: month + 1, day })}">
+            ${day}
+          </span>`
+          ).join('')}
+        ${firstWeekOfNextMonth.map(day => `<span class="blur day ${isSelect.call(that, { year, month: month + 2, day })}" data-time-seq="next">${day}</span>`).join('')}
       </div>
     `;
-  };
+  }
 
-  const setState = newState => {
-    state = { ...state, ...newState };
+  addEventHandler() {
+    this.$calendar.addEventListener('click', e => {
+      if (!(e.target.matches('.btn--prev') || e.target.matches('.btn--next'))) return;
 
-    render();
-  };
+      const { year, month } = this.state;
 
-  $container.addEventListener('click', e => {
-    if (!(e.target.matches('.btn--prev') || e.target.matches('.btn--next'))) return;
-
-    setState({
-      year: state.year,
-      month: e.target.matches('.btn--prev') ? state.month - 1 : state.month + 1,
-      day: state.day,
-    });
-  });
-
-  $container.addEventListener('close', () => {
-    $calendar.classList.add('hide');
-  });
-
-  $container.addEventListener('open', () => {
-    $calendar.classList.remove('hide');
-  });
-
-  $calendar.addEventListener('click', e => {
-    if (!e.target.matches('.day')) return;
-
-    const { year, month } = e.target.dataset;
-    const day = e.target.textContent;
-
-    const target = new Date(year, month, day);
-    console.log(target);
-
-    const customEvent = new CustomEvent('select', {
-      detail: `${target.getFullYear()}-${(target.getMonth() + 1).toString().padStart(2, '0')}-${target
-        .getDate()
-        .toString()
-        .padStart(2, '0')}`,
+      this.setState({
+        year,
+        month: e.target.matches('.btn--prev') ? month - 1 : month + 1,
+      });
     });
 
-    $container.dispatchEvent(customEvent);
-  });
+    this.$calendar.addEventListener('click', e => {
+      if (!e.target.matches('.day')) return;
 
-  render();
-};
+      const { timeSeq } = e.target.dataset;
+      let { month } = this.state;
+      const day = e.target.textContent;
+
+      if (timeSeq === 'prev') month -= 1;
+      if (timeSeq === 'next') month += 1;
+
+      const outputDate = new Date(this.state.year, month, day);
+      const [outputYear, outputMonth, outputDay] = [
+        outputDate.getFullYear(),
+        outputDate.getMonth(),
+        outputDate.getDate(),
+      ];
+
+      const customSelectEvent = new CustomEvent('select', {
+        detail: `${outputYear}-${(outputMonth + 1 + '').padStart(2, '0')}-${(outputDay + '').padStart(2, '0')}`,
+      });
+
+      this.$container.dispatchEvent(customSelectEvent);
+      this.close();
+    });
+  }
+
+  close() {
+    this.$calendar.classList.add('hide');
+  }
+
+  open(selectedDate) {
+    this.$calendar.classList.remove('hide');
+
+    if (!selectedDate.length) return;
+
+    const [year, month] = selectedDate;
+
+    this.setState({
+      year,
+      month: month - 1,
+      selectedDate,
+    });
+  }
+}
 
 export default Calendar;

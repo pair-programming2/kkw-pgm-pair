@@ -4,37 +4,66 @@
   box-sizing: border-box;
 }
 
-button {
-  border: none;
-  background-color: transparent;
-  cursor: pointer;
-  color: #fff;
+.calendar {
+  margin-top: 0.3rem;
+  width: var(--calendar-size);
+  font-size: calc(var(--calendar-size) / 300 * 16);
+  box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif,
+    Geneva, Tahoma, sans-serif;
+  font-style: italic;
 }
 
-.day {
-  cursor: pointer;
+.calendar.hide {
+  display: none;
 }
 
-.today {
-  border: 1px solid #44c379;
+.calendar .week-day {
+  color: #d6c6b6;
+  font-weight: bold;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calendar .blur {
+  color: #808080;
+}
+
+.calendar .day {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border-radius: 50%;
-  padding: 0.2rem 0.3rem;
+  padding: 0.4em 0;
 }
 
-.sunday {
+.calendar .day:hover {
+  background-color: #e2e2e2;
+}
+
+.calendar .today {
+  border: 1px solid #99ccff;
+}
+
+.calendar .sunday {
   color: red;
 }
 
-.calendar {
-  max-width: 300px;
+.calendar .select {
+  background-color: #99ccff;
 }
 
 .calendar-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #44c379;
-  padding: 0.5rem 1rem;
+  background-color: #99ccff;
+  padding: 1rem;
   color: #fff;
   border-top-right-radius: 8px;
   border-top-left-radius: 8px;
@@ -47,22 +76,23 @@ button {
   align-items: center;
 }
 
+.calendar-nav .btn--prev,
+.calendar-nav .btn--next {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  color: #fff;
+}
+
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(35px, 1fr);
   justify-items: center;
   align-items: center;
-  border: solid 1px black;
+  border: solid 1px white;
   border-bottom-left-radius: 8px;
   border-bottom-right-radius: 8px;
-  padding: 0.5rem;
-  gap: 3px;
-}
-
-.blur {
-  color: #808080;
-}
-
-.hide {
-  display: none;
+  padding: 0.8rem;
+  gap: 5px;
 }

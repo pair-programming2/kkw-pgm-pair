@@ -1,29 +1,37 @@
-const DatePicker = ($container, Calendar) => {
-  $container.innerHTML = `<input type="text" class="date-input" readonly placeholder="Select date" />`;
-  Calendar($container);
+const $link = [...document.querySelectorAll('link')].at(-1);
+$link.insertAdjacentHTML('afterend', '<link href="./datepicker/style.css" rel="stylesheet" />');
 
-  const $dateInput = $container.querySelector('.date-input');
+class DatePicker {
+  constructor($container, Calendar) {
+    this.$container = $container;
+    this.$datePicker = document.createElement('input');
+    this.$container.appendChild(this.$datePicker);
+    [this.$datePicker.type, this.$datePicker.readOnly, this.$datePicker.placeholder] = ['text', true, 'Select date'];
 
-  window.addEventListener('click', () => {
-    const customEvent = new CustomEvent('close');
+    this.calendar = new Calendar($container);
 
-    $container.dispatchEvent(customEvent);
-  });
+    this.addEventHandler();
+  }
 
-  $container.addEventListener('click', e => {
-    e.stopPropagation();
-  });
+  addEventHandler() {
+    window.addEventListener('click', () => {
+      this.calendar.close();
+    });
 
-  $container.addEventListener('select', e => {
-    $dateInput.value = e.detail;
-    console.log(e.detail);
-  });
+    this.$container.addEventListener('click', e => {
+      e.stopPropagation();
+    });
 
-  $dateInput.addEventListener('click', () => {
-    const customEvent = new CustomEvent('open');
+    this.$container.addEventListener('select', e => {
+      this.$datePicker.value = e.detail;
+    });
 
-    $container.dispatchEvent(customEvent);
-  });
-};
+    this.$datePicker.addEventListener('click', () => {
+      const { value } = this.$datePicker;
+
+      this.calendar.open(value === '' ? [] : value.split('-').map(Number));
+    });
+  }
+}
 
 export default DatePicker;

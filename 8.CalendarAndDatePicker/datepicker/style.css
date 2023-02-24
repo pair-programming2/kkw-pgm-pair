@@ -1,0 +1,16 @@
+input {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif,
+    Geneva, Tahoma, sans-serif;
+  font-style: italic;
+  font-size: 20px;
+
+  margin-top: 10px;
+  padding: 5px;
+
+  border: 0;
+  border-radius: 15px;
+
+  outline: none;
+
+  background-color: rgb(225, 225, 225);
+}

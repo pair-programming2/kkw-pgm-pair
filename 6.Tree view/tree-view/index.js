@@ -23,10 +23,10 @@ class TreeView {
 
       if (!$a) return;
 
-      const { eventType, name } = $a.dataset;
+      const { eventType, name, id } = $a.dataset;
 
       const customEvent = new CustomEvent(eventType, {
-        detail: { name },
+        detail: { name, id },
       });
 
       this.#$container.dispatchEvent(customEvent);
@@ -52,9 +52,9 @@ class TreeView {
 
   #createDomString(subTree) {
     // prettier-ignore
-    return subTree.map(({name, children = [], isOpen = null}) => `
+    return subTree.map(({id, name, children = [], isOpen = null}) => `
       <li class="tree-node">
-        <a href="#" data-name="${name}" data-event-type="${!children.length ? 'select' : isOpen ? 'collapse' : 'expand'}">
+        <a href="#" data-id="${id}" data-name="${name}" data-event-type="${!children.length ? 'select' : isOpen ? 'collapse' : 'expand'}">
           <span class="tree-switcher ${isOpen === null ? 'noop' : isOpen ? 'expand' : 'collapse'}"></span>
           <span class="tree-content">${name}</span>
         </a>
@@ -72,16 +72,16 @@ class TreeView {
     `
   }
 
-  #travelAndToggle(subTree, targetName) {
+  #travelAndToggle(subTree, id) {
     return subTree.map(node => ({
       ...node,
-      isOpen: node.name === targetName ? !node.isOpen : node.isOpen,
-      children: this.#travelAndToggle(node.children ?? [], targetName),
+      isOpen: node.id === +id ? !node.isOpen : node.isOpen,
+      children: this.#travelAndToggle(node.children ?? [], id),
     }));
   }
 
-  switch(targetName) {
-    const updatedTree = this.#travelAndToggle(this.#tree, targetName);
+  switch(id) {
+    const updatedTree = this.#travelAndToggle(this.#tree, id);
 
     this.#setState(updatedTree);
   }
