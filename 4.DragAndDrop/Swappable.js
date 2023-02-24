@@ -41,7 +41,7 @@ const Swappable = $swappable => {
     $li.classList.toggle('right', isRight);
     $li.classList.toggle('wrong', !isRight);
   };
-
+  const isDragInLi = false;
   $draggableList.addEventListener('dragstart', e => {
     dragSrc = e.target;
   });
