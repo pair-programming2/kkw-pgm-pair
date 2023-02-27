@@ -40,7 +40,6 @@ class Newslist {
 
     page = 1;
     const articles = await fetchNews(state.category);
-    console.log('[render]', articles);
 
     // prettier-ignore
     this.$root.innerHTML += `
@@ -81,7 +80,6 @@ class Newslist {
       if (!entries[0].isIntersecting) return;
 
       const articles = await fetchNews(state.category);
-      console.log('[observer]', articles);
 
       if (articles.length === 0) {
         $observer.style.display = 'none';
