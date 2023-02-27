@@ -7,6 +7,7 @@ const $datepickerContainer = document.querySelectorAll('.datepicker-container');
 // DatePicker($datepickerContainer, Calendar);
 
 [...$datepickerContainer].forEach($container => {
+  // eslint-disable-next-line no-new
   new DatePicker($container, Calendar);
 });
 // new DatePicker($datepickerContainer2, Calendar);

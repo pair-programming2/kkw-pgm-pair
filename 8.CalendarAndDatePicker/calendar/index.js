@@ -41,11 +41,11 @@ const getCreatedCalendar = ({ year, month }) => {
     { length: startWeekDay },
     (_, i) => endDateOfPrevMonth - (startWeekDay - 1) + i
   );
-  const WeeksOfThisMonth = Array.from({ length: endDay }, (_, i) => i + 1);
+  const weeksOfThisMonth = Array.from({ length: endDay }, (_, i) => i + 1);
   const firstWeekOfNextMonth = Array.from({ length: 6 - endWeekDay }, (_, i) => i + 1);
 
   return {
-    WeeksOfThisMonth,
+    weeksOfThisMonth,
     lastWeekOfPrevMonth,
     firstWeekOfNextMonth,
     year: thisYear,
@@ -86,7 +86,7 @@ class Calendar {
   }
 
   render() {
-    const { lastWeekOfPrevMonth, WeeksOfThisMonth, firstWeekOfNextMonth, year, month } = getCreatedCalendar(this.state);
+    const { lastWeekOfPrevMonth, weeksOfThisMonth, firstWeekOfNextMonth, year, month } = getCreatedCalendar(this.state);
 
     const { isSelect } = this;
     const that = this;
@@ -97,14 +97,14 @@ class Calendar {
         <button type="button" class="btn--prev">◀️</button>
           <div class="date-info">
             <p class="months">${MONTHS_OF_YEAR[month]}</p>
-            <span class="year">${year}</span>
+            <div class="year">${year}</div>
           </div>
         <button type="button" class="btn--next">▶️</button>
       </div>
       <div class="calendar-grid">
         ${DAY_OF_THE_WEEK.map(weekDay => `<span class="week-day">${weekDay}</span>`).join('')}
         ${lastWeekOfPrevMonth.map(day => `<span class="blur day ${isSelect.call(that, { year, month, day })}" data-time-seq="prev">${day}</span>`).join('')}
-        ${WeeksOfThisMonth.map(day => 
+        ${weeksOfThisMonth.map(day => 
           `<span class="${isToday({year, month, day})} ${isSunDay({year, month, day})} day ${isSelect.call(that, { year, month: month + 1, day })}">
             ${day}
           </span>`
