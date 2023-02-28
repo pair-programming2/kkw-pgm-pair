@@ -12,28 +12,44 @@ function updateAttributes(oldNode, newNode) {
 }
 
 function updateElement(parent, newNode, oldNode) {
-  if (!newNode && oldNode) return oldNode.remove();
+  // if (!newNode && oldNode) return oldNode.remove();
+  // if (newNode && !oldNode) {
+  //   console.log(parent, newNode);
+  //   parent.appendChild(newNode);
+  // }
 
-  if (newNode && !oldNode) return parent.appendChild(newNode);
+  // if (newNode instanceof Text && oldNode instanceof Text) {
+  //   if (oldNode.nodeValue === newNode.nodeValue) return;
+  //   oldNode.nodeValue = newNode.nodeValue;
+  //   return;
+  // }
 
-  if (newNode instanceof Text && oldNode instanceof Text) {
-    if (oldNode.nodeValue === newNode.nodeValue) return;
-    oldNode.nodeValue = newNode.nodeValue;
-    return;
-  }
+  // if (newNode.nodeName !== oldNode.nodeName) {
+  //   const index = [...parent.childNodes].indexOf(oldNode);
+  //   oldNode.remove();
+  //   parent.appendChild(newNode, index);
+  //   return;
+  // }
 
-  if (newNode.nodeName !== oldNode.nodeName) {
-    const index = [...parent.childNodes].indexOf(oldNode);
-    oldNode.remove();
-    parent.appendChild(newNode, index);
-    return;
-  }
+  // updateAttributes(oldNode, newNode);
 
-  updateAttributes(oldNode, newNode);
-
+  if (newNode === undefined || oldNode === undefined) return;
   const newChildren = [...newNode.childNodes];
   const oldChildren = [...oldNode.childNodes];
   const maxLength = Math.max(newChildren.length, oldChildren.length);
+  let newIndex = 0;
+  let oldIndex = 0;
+
+  while (newIndex < newChildren.length && oldIndex < oldChildren.length) {
+    if (newChildren[newIndex].id !== oldChildren[oldIndex].id) {
+      console.log(parent, newChildren[newIndex]);
+      parent.appendChild(newChildren[newIndex]);
+      newIndex += 1;
+    } else {
+      newIndex += 1;
+      oldIndex += 1;
+    }
+  }
 
   for (let i = 0; i < maxLength; i++) {
     updateElement(oldNode, newChildren[i], oldChildren[i]);
@@ -96,10 +112,10 @@ class App {
       ${TodoFilter(this.state)}
     `;
 
-    console.log(oldNode);
-    console.log(newNode);
+    console.log(oldNode.cloneNode(true));
+    console.log(newNode.cloneNode(true));
 
-    updateElement(this.$root, newNode, oldNode);
+    updateElement(this.$root, newNode.cloneNode(true), oldNode.cloneNode(true));
   }
 
   setState(newState) {
