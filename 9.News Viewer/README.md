@@ -130,4 +130,32 @@ this.store.subscribe('category', this.render.bind(this));
 
 ## 선언
 
-힘들어따... 프록시..옵저버...
+`<App />` 에서 전역 상태인 `category`를 관리했을 때는 상태가 변경되었을 때 `<App />`의 render 함수를 호출해서 `<Nav />`와 `<NewsList />`의 render 함수를 호출했다.
+
+```js
+// App.js
+this.state = {
+  category: 'all'
+}
+
+this.render() {
+  nav.render(this.state);
+  newsList.render(this.state);
+}
+```
+
+또한, 상태의 변경이 발생하는 `<Nav />`에 상태가 변경되었을 때 호출되는 `<App />`의 render 함수를 콜백함수로 전달해야 했다.
+
+```js
+// App.js
+
+new Nav({
+  $root,
+  changeCategory: newState => {
+    // 상태를 바꾸고 랜더하는 코드
+    this.render();
+  },
+});
+```
+
+전역 상태 관리 기능을 `Proxy`객체와 `Observer`패턴을 통해 구현을 하니 상태를 변경하고 리렌더링하는 코드 구조도 훨씬 간결해졌다.
