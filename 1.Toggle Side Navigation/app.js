@@ -11,14 +11,12 @@ window.addEventListener('DOMContentLoaded', () => {
   document.body.style.visibility = 'visible';
 });
 
-window.addEventListener('beforeunload', () => {
-  localStorage.setItem('isNavActive', isNavActive);
-});
-
 $toggleBtn.addEventListener('click', () => {
   isNavActive = !isNavActive;
 
   document.body.classList.remove('preload');
+
+  localStorage.setItem('isNavActive', isNavActive);
 
   $nav.classList.toggle('active', isNavActive);
 });

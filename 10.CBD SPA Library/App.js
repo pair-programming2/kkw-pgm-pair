@@ -1,24 +1,20 @@
 /* eslint-disable no-continue */
 import { TodoInput, TodoList, TodoFilter } from './component/index.js';
 
+// HTML 속성을 가져오는데 attributes 말고
 function updateAttributes(oldNode, newNode) {
-  if (oldNode.tagName === 'INPUT') {
-    console.log(oldNode.cloneNode(true), newNode.cloneNode(true));
-    console.log(oldNode.getAttribute('checked'), newNode.getAttribute('checked'));
-
+  if (oldNode.checked !== newNode.checked) {
+    console.log([...oldNode.cloneNode(true).attributes], [...newNode.attributes]);
     oldNode.checked = newNode.checked;
   }
 
-  for (const { name, value } of [...newNode.attributes]) {
-    if (name === 'checked') continue;
-
+  for (const { name, value } of [...newNode.attributes].filter(({ name }) => name !== 'checked')) {
     if (value !== oldNode.getAttribute(name)) {
       oldNode.setAttribute(name, value);
     }
   }
-  for (const { name } of [...oldNode.attributes]) {
-    if (name === 'checked') continue;
 
+  for (const { name } of [...oldNode.attributes].filter(({ name }) => name !== 'checked')) {
     if (newNode.getAttribute(name) === undefined) {
       oldNode.removeAttribute(name);
     }

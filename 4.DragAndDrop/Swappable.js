@@ -51,7 +51,7 @@ const Swappable = $swappable => {
   });
 
   $draggableList.addEventListener('dragenter', e => {
-    e.preventDefault();
+    // e.preventDefault();
 
     // 리팩토링 필요 add remove로 동작은 함
     isDragInLi = !e.target.closest('.seq') && e.target.closest('.over');
@@ -62,7 +62,7 @@ const Swappable = $swappable => {
   });
 
   $draggableList.addEventListener('dragleave', e => {
-    e.preventDefault();
+    // e.preventDefault();
 
     console.log('leave', isDragInLi);
     // 리팩토링 필요 add remove로 동작은 함
