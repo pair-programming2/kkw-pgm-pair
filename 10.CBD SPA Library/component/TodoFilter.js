@@ -8,7 +8,7 @@ const TodoFilter = ({ todoFilter, currentTodoFilterId }) => {
       </li>
       `).join('')}
     </ul>
-  `
+  `;
 
   return render();
 };

@@ -1,7 +1,8 @@
 import TodoItem from './TodoItem.js';
 
-const TodoList = ({ todos }) => {
-  const render = () => `
+const TodoList = todos => {
+  // prettier-ignore
+  const render = () =>`
     <ul class="todo-list">
       ${todos.map(todo => TodoItem(todo)).join('')}
     </ul>
