@@ -27,8 +27,6 @@ const createGameStatusText = () => {
 
 const TicTacToe = $root => {
   const render = () => {
-    // console.log('[state]', state);
-
     const { board } = state;
 
     // prettier-ignore
