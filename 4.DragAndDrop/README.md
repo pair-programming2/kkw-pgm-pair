@@ -64,9 +64,9 @@ G -> E D C A H B F
 
 ### 구현
 
-HTML을 동적으로 생성시 `languages` 배열을 균일한 빈도수로 무작위 뒤섞기 위해 피셔-예이츠 셔플의 현대적인 알고리즘을 사용했다.
+HTML을 동적으로 생성시 `languages` 배열을 균일한 빈도수로 무작위 뒤섞기 위해 `피셔-예이츠 셔플`의 `현대적인 알고리즘`을 사용했다.
 
-- 의사코드
+#### 의사코드
 
 ```
 for i from n−1 downto 1 do
@@ -74,7 +74,7 @@ for i from n−1 downto 1 do
   a[j]와 a[i] 교환
 ```
 
-- 자바스크립트로 구현
+#### 자바스크립트로 구현
 
 ```js
 const fisherYatesShuffle = array => {
@@ -95,56 +95,39 @@ const fisherYatesShuffle = array => {
 
 ## 드래그 앤 드롭 API
 
-HTML 요소를 드래그 앤 드롭을 하기 위해 드래그 앤 드롭 API 사용했다.
-사용한 이벤트는 `dragstart`, `dragover`,`dragenter`, `dragleave`, `drop`을 사용했다.
+### `dragstart`
 
-`dragstart`: 사용자가 요소 또는 텍스트 선택을 끌기 시작하면 이벤트가 시작된다.
+- 사용자가 요소 또는 텍스트 선택을 끌기 시작하면 이벤트가 시작된다.
 
-`dragover`: 요소 또는 텍스트 선택 항목이 유효한 놓기 대상 위로 드래그될 때(수백 밀리초마다) 시작된다.
+### `dragover`
 
-`dragenter`: 드래그한 요소 또는 텍스트 선택 항목이 유효한 드롭 대상에 들어가면 이벤트가 한번만 발생
+- 요소 또는 텍스트 선택 항목이 유효한 놓기 대상 위로 드래그될 때(수백 밀리초마다) 시작된다.
 
-`dragleave`: 드래그한 요소 또는 텍스트 선택이 유효한 놓기 대상을 벗어나면 이벤트가 시작된다.
+### `dragenter`
 
-`drop`: 요소 또는 텍스트 선택이 유효한 놓기 대상에 놓이면 이벤트가 시작된다.
+- 드래그한 요소 또는 텍스트 선택 항목이 유효한 드롭 대상에 들어가면 이벤트가 한번만 발생
 
-HTML요소를 드래그 동작으로 전송된 데이터를 보유하기 위해 `DataTransfer` 개체를 사용했다.
+### `dragleave`
 
-`DataTransfer`는 드래그 동작으로 전송된 데이터를 보유하고 `dragstart` 이벤트에서 설정되고 드롭 이벤트에서 판독처리된다.
+- 드래그한 요소 또는 텍스트 선택이 유효한 놓기 대상을 벗어나면 이벤트가 시작된다.
 
-`e.dataTransfer.setData(mimeType, dataPayload)`를 호출하면 개체의 MIME 유형과 데이터 페이로드를 설정할 수 있다.
+### `drop`
 
-HTML요소를 드롭시 타겟요소와 교체 하기 위해 `dataTransfer.getData`를 사용했다.
+- 요소 또는 텍스트 선택이 유효한 놓기 대상에 놓이면 이벤트가 시작된다.
 
-`dataTransfer.getData`는 지정된 유형에 대한 드래그 데이터(문자열)를 검색한다. 드래그 작업에 데이터가 포함되지 않은 경우 이 메서드는 빈 문자열을 반환한다.
+### `dragstart` vs `drag`
 
-HTML요소를 새 위치로 이동시키기 위해 `dataTransfer.dropEffect`를 사용했다.
+`dragstart`는 사용자가 요소 또는 텍스트 선택 항목을 드래그 할 때 한 번 발생 되고 `drag`는 수백 밀리초마다 발생된다.
 
-`dataTransfer.dropEffect`는 사용자가 대상 요소 위로 마우스를 가져가면 브라우저의 커서가 어떤 유형의 작업(예: 복사, 이동 등)을 수행할 것인지 나타낸다.
+=> `dragstart` 사용
 
-none, copy, link, move 값 중 하나에 효과를 나타낼 수 있다.
-
-`copy`: 원본 항목의 복사본이 새 위치에 만들어진다.
-
-`move`: 항목이 새 위치로 이동된다.
-
-`link`: 새 위치에서 소스에 대한 링크가 설정된다.
-
-`none`: 요소를 드랍할 수 없다.
-
-### dragstart vs drag
-
-`dragstart`는 한 번 실행되어야 하고 drag는 계속 실행되어야 한다.
-
-이러한 이유로 `dragstart`를 사용했다.
-
-### drop vs dragend
+### `drop` vs `dragend`
 
 `drop`은 유효한 드롭 대상에 요소 또는 텍스트 선택 항목을 놓을 때 발생하고 `dragend`는 드래그 작업이 종료될 때(마우스 버튼에서 손을 떼거나 ESC 키를 누르면) 드래그 이벤트가 발생한다.
 
-해당 과제에서는 ESC키를 누르는 요구사항은 없으므로 `drop`을 사용했다.
+=> `drop` 사용
 
-## `dragover`와 `drop`의 관계
+### `dragover`와 `drop`의 관계
 
 `dragover` 이벤트 핸들러에서 `e.preventDefault()`를 호출해서 `drop` 이벤트 핸들러가 동작할 수 있도록 했다. (`dragover`의 기본 동작은 `drop`을 허용하지 않는다.)
 
