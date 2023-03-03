@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import { TodoInput, TodoList, TodoFilter } from './component/index.js';
 
-function updateAttributes(oldNode, newNode) {
+const updateAttributes = (oldNode, newNode) => {
   if (oldNode.cloneNode(true).checked !== newNode.checked) oldNode.checked = newNode.checked;
 
   for (const { name, value } of [...newNode.attributes]) {
@@ -14,9 +14,9 @@ function updateAttributes(oldNode, newNode) {
       oldNode.removeAttribute(name);
     }
   }
-}
+};
 
-function updateElement(parent, oldChildren, newChildren) {
+const diff = (parent, oldChildren, newChildren) => {
   const maxLength = Math.max(oldChildren.length, newChildren.length);
   let oldIdx = 0;
   let newIdx = 0;
@@ -36,7 +36,7 @@ function updateElement(parent, oldChildren, newChildren) {
         if (oldChild.textContent !== newChild.textContent) oldChild.textContent = newChild.textContent;
       }
 
-      updateElement(oldChild, [...oldChild.children], [...newChild.children]);
+      diff(oldChild, [...oldChild.children], [...newChild.children]);
     } else if (oldChild.tagName !== newChild.tagName) {
       parent.replaceChild(newChild, oldChild);
     }
@@ -44,7 +44,7 @@ function updateElement(parent, oldChildren, newChildren) {
     oldIdx += 1;
     newIdx += 1;
   }
-}
+};
 
 class App {
   constructor($root) {
@@ -112,7 +112,7 @@ class App {
     const oldChildren = [...this.$root.children];
     const newChildren = [...newNode.children];
 
-    updateElement(this.$root, oldChildren, newChildren);
+    diff(this.$root, oldChildren, newChildren);
   }
 
   setState(newState) {
