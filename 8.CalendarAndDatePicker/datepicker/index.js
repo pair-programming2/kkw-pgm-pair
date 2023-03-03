@@ -1,5 +1,6 @@
-const $link = [...document.querySelectorAll('link')].at(-1);
+let $link = [...document.querySelectorAll('link')].at(-1);
 $link.insertAdjacentHTML('afterend', '<link href="./datepicker/style.css" rel="stylesheet" />');
+$link = [...document.querySelectorAll('link')].at(-1);
 
 class DatePicker {
   #$container = null;
@@ -11,23 +12,27 @@ class DatePicker {
   constructor($container, Calendar) {
     this.#$container = $container;
     this.#$datePicker = document.createElement('input');
-
     [this.#$datePicker.type, this.#$datePicker.readOnly, this.#$datePicker.placeholder] = ['text', true, 'Select date'];
 
-    this.#$container.appendChild(this.#$datePicker);
+    $link.addEventListener('load', () => {
+      this.#$container.appendChild(this.#$datePicker);
 
-    this.#calendar = new Calendar($container);
-
-    this.#addEventHandler();
+      this.#calendar = new Calendar($container);
+      this.#addEventHandler();
+    });
   }
 
   #addEventHandler() {
-    window.addEventListener('click', e => {
-      if (this.#$container.contains(e.target)) return;
+    window.addEventListener('click', () => {
       this.#calendar.close();
     });
 
+    this.#$container.addEventListener('click', e => {
+      e.stopPropagation();
+    });
+
     this.#$container.addEventListener('choose', e => {
+      console.log(e.detail);
       this.#$datePicker.value = e.detail;
     });
 

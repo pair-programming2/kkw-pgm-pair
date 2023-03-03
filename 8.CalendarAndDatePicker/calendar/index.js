@@ -1,5 +1,6 @@
-const $link = [...document.querySelectorAll('link')].at(-1);
+let $link = [...document.querySelectorAll('link')].at(-1);
 $link.insertAdjacentHTML('afterend', '<link href="./calendar/style.css" rel="stylesheet" />');
+$link = [...document.querySelectorAll('link')].at(-1);
 
 const DAY_OF_THE_WEEK = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const MONTHS_OF_YEAR = [
@@ -76,10 +77,13 @@ class Calendar {
     this.#$calendar.classList.add('calendar', 'hide');
     this.#$calendar.style.setProperty('--calendar-size', '300px');
 
-    this.#$container.appendChild(this.#$calendar);
+    $link.addEventListener('load', () => {
+      this.#$container.appendChild(this.#$calendar);
 
-    this.#addEventHandler();
-    this.#render();
+      this.#addEventHandler();
+
+      this.#render();
+    });
   }
 
   #isSelect({ year, month, day }) {

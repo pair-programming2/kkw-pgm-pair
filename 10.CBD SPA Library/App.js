@@ -1,31 +1,22 @@
 /* eslint-disable no-continue */
 import { TodoInput, TodoList, TodoFilter } from './component/index.js';
 
-// HTML 속성을 가져오는데 attributes 말고
 function updateAttributes(oldNode, newNode) {
-  if (oldNode.checked !== newNode.checked) {
-    console.log([...oldNode.cloneNode(true).attributes], [...newNode.attributes]);
-    oldNode.checked = newNode.checked;
-  }
+  if (oldNode.cloneNode(true).checked !== newNode.checked) oldNode.checked = newNode.checked;
 
-  for (const { name, value } of [...newNode.attributes].filter(({ name }) => name !== 'checked')) {
+  for (const { name, value } of [...newNode.attributes]) {
     if (value !== oldNode.getAttribute(name)) {
       oldNode.setAttribute(name, value);
     }
   }
-
-  for (const { name } of [...oldNode.attributes].filter(({ name }) => name !== 'checked')) {
-    if (newNode.getAttribute(name) === undefined) {
+  for (const { name } of [...oldNode.attributes]) {
+    if (newNode.getAttribute(name) === undefined || newNode.getAttribute(name) === null) {
       oldNode.removeAttribute(name);
     }
   }
 }
 
 function updateElement(parent, oldChildren, newChildren) {
-  // console.log('[parent]', parent);
-  // console.log('[oldChildren]', oldChildren);
-  // console.log('[newChildren]', newChildren);
-
   const maxLength = Math.max(oldChildren.length, newChildren.length);
   let oldIdx = 0;
   let newIdx = 0;
@@ -53,36 +44,6 @@ function updateElement(parent, oldChildren, newChildren) {
     oldIdx += 1;
     newIdx += 1;
   }
-  /*
-    4   4    3 < 4 
-    3 > 2    2   3
-    2   1    1   2
-    1            1
-  */
-  // console.log(new)
-  // if (!newNode && oldNode) return oldNode.remove();
-  // if (newNode && !oldNode) {
-  //   console.log(parent, newNode);
-  //   parent.appendChild(newNode);
-  // }
-  // if (newNode instanceof Text && oldNode instanceof Text) {
-  //   if (oldNode.nodeValue === newNode.nodeValue) return;
-  //   oldNode.nodeValue = newNode.nodeValue;
-  //   return;
-  // }
-  // if (newNode.nodeName !== oldNode.nodeName) {
-  //   const index = [...parent.childNodes].indexOf(oldNode);
-  //   oldNode.remove();
-  //   parent.appendChild(newNode, index);
-  //   return;
-  // }
-  // updateAttributes(oldNode, newNode);
-  // const newChildren = [...newNode.childNodes];
-  // const oldChildren = [...oldNode.childNodes];
-  // const maxLength = Math.max(newChildren.length, oldChildren.length);
-  // for (let i = 0; i < maxLength; i++) {
-  //   updateElement(oldNode, newChildren[i], oldChildren[i]);
-  // }
 }
 
 class App {
@@ -140,24 +101,6 @@ class App {
     );
 
     console.log('[STATE]', _todos);
-    // if (oldState === undefined) {
-    //   this.$root.innerHTML = `
-    //       ${TodoInput()}
-    //       ${TodoList(this.state)}
-    //       ${TodoFilter(this.state)}
-    //     `;
-
-    //   return;
-    // }
-
-    // if (JSON.stringify(oldState) === JSON.stringify(this.state)) return;
-
-    // const oldNode = document.createElement('div');
-    // oldNode.innerHTML = `
-    //   ${TodoInput()}
-    //   ${TodoList(oldState)}
-    //   ${TodoFilter(oldState)}
-    // `;
 
     const newNode = document.createElement('div');
     newNode.innerHTML = `

@@ -27,45 +27,27 @@ const fetchNews = async category => {
 };
 
 class Newslist {
-  constructor({ $root, store }) {
-    this.$root = $root;
-    this.store = store;
-    this.store.subscribe('category', this.render.bind(this));
+  #$root = null;
 
-    this.render();
+  #store = null;
+
+  constructor({ $root, store }) {
+    this.#$root = $root;
+    this.#store = store;
+    this.#store.subscribe('category', this.#render.bind(this));
+
+    this.#render();
   }
 
-  async render() {
-    const { state } = this.store;
+  #render() {
+    const { state } = this.#store;
 
     page = 1;
-    const articles = await fetchNews(state.category);
 
     // prettier-ignore
-    this.$root.innerHTML += `
+    this.#$root.innerHTML += `
       <div class="news-list-container">
         <article class="news-list">
-          ${articles.map(article=>`
-            <section class="news-item">
-              <div class="thumbnail">
-                <a href="${article.url}" target="_blank" rel="noopener noreferrer">
-                  <img
-                    src="${article.urlToImage ?? 'https://via.placeholder.com/160'}"
-                    alt="thumbnail" />
-                </a>
-              </div>
-              <div class="contents">
-                <h2>
-                  <a href="${article.url}" target="_blank" rel="noopener noreferrer">
-                    ${article.title}
-                  </a>
-                </h2>
-                <p>
-                  ${article.content ?? '내용입니다'.repeat(30)}
-                </p>
-              </div>
-            </section>
-          `).join('')}
         </article>
         <div class="scroll-observer">
           <img src="img/ball-triangle.svg" alt="Loading..." />
@@ -73,8 +55,8 @@ class Newslist {
       </div>
     `;
 
-    const $article = this.$root.querySelector('.news-list');
-    const $observer = this.$root.querySelector('.scroll-observer');
+    const $article = this.#$root.querySelector('.news-list');
+    const $observer = this.#$root.querySelector('.scroll-observer');
 
     const callback = async entries => {
       if (!entries[0].isIntersecting) return;
