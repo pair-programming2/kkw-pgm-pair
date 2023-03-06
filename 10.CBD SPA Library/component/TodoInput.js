@@ -1,5 +1,8 @@
 /* eslint-disable class-methods-use-this */
 
+/*
+  <input props />
+*/
 class TodoInput {
   constructor({ addTodo }) {
     this.addTodo = addTodo;
