@@ -1,5 +1,6 @@
-const TodoItem = todo => {
-  const render = () => {
+/* eslint-disable class-methods-use-this */
+class TodoItem {
+  render({ todo }) {
     const { id, content, completed } = todo;
 
     return `
@@ -9,9 +10,7 @@ const TodoItem = todo => {
         <button class="todo-remove">X</button>
       </li>
     `;
-  };
-
-  return render();
-};
+  }
+}
 
 export default TodoItem;
