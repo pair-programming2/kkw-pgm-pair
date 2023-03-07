@@ -1,8 +1,11 @@
 import { TodoInput, TodoList, TodoFilter } from './component/index.js';
 import diff from './core/diff.js';
+import Component from './core/Component.js';
 
-class App {
-  constructor($root) {
+class App extends Component {
+  init() {
+    this.$root = document.getElementById('root');
+
     this.state = {
       todos: [
         { id: 3, content: 'Javascript', completed: false },
@@ -13,16 +16,19 @@ class App {
       currentTodoFilterId: 0,
     };
 
-    this.$root = $root;
-    this.$todoInput = new TodoInput({ addTodo: this.addTodo.bind(this) });
-    this.$todoList = new TodoList({ toggleTodo: this.toggleTodo.bind(this), removeTodo: this.removeTodo.bind(this) });
-    this.$todoFilter = new TodoFilter({ filterTodo: this.filterTodo.bind(this) });
+    this.$todoInput = new TodoInput({ addTodo: this.addTodo.bind(this) }).render;
+    this.$todoList = new TodoList({
+      toggleTodo: this.toggleTodo.bind(this),
+      removeTodo: this.removeTodo.bind(this),
+    }).render;
+    this.$todoFilter = new TodoFilter({ filterTodo: this.filterTodo.bind(this) }).render;
 
     this.render();
   }
 
   render() {
     const { todos, todoFilter, currentTodoFilterId } = this.state;
+    const { $todoInput, $todoList, $todoFilter } = this;
 
     const _todos = todos.filter(todo =>
       todoFilter[currentTodoFilterId] === 'Completed'
@@ -36,47 +42,59 @@ class App {
 
     const newNode = this.$root.cloneNode(true);
 
+    // prettier-ignore
     newNode.innerHTML = `
-      ${this.$todoInput.render()}
-      ${this.$todoList.render({ todos: _todos })}
-      ${this.$todoFilter.render({ todoFilter, currentTodoFilterId })}
-    `;
+      ${$todoInput()}
+      ${$todoList({ todos: _todos })}
+      ${$todoFilter({ todoFilter, currentTodoFilterId })}
+    `.replace(/\s*>[\s\n]*</g, '><').trim();
 
-    const oldChildren = [...this.$root.children];
-    const newChildren = [...newNode.children];
+    if (!this.$root.innerHTML) {
+      this.$root.innerHTML = newNode.innerHTML;
+      return;
+    }
 
-    diff(this.$root, oldChildren, newChildren);
-
-    this.$todoInput.addEventHandler();
-    this.$todoList.addEventHandler();
-    this.$todoFilter.addEventHandler();
-  }
-
-  setState(newState) {
-    this.state = { ...this.state, ...newState };
-
-    this.render();
+    diff(this.$root, [...this.$root.childNodes], [...newNode.childNodes]);
   }
 
   generateNextId() {
     return Math.max(0, ...this.state.todos.map(todo => todo.id)) + 1;
   }
 
-  addTodo(content) {
-    this.setState({ todos: [{ id: this.generateNextId.call(this), content, completed: false }, ...this.state.todos] });
+  addTodo(e) {
+    if (e.isComposing || e.keyCode === 229) return;
+    if (e.key !== 'Enter' || !e.target.matches('.todo-input')) return;
+
+    const content = e.target.value.trim();
+    if (content === '') return;
+
+    e.target.value = '';
+    this.setState({ todos: [{ id: this.generateNextId(), content, completed: false }, ...this.state.todos] });
   }
 
-  removeTodo(id) {
+  removeTodo(e) {
+    if (!e.target.matches('.todo-remove')) return;
+
+    const { id } = e.target.closest('li');
+
     this.setState({ todos: this.state.todos.filter(todo => todo.id !== +id) });
   }
 
-  toggleTodo(id) {
+  toggleTodo(e) {
+    if (!e.target.matches('input[type="checkbox"]')) return;
+
+    const { id } = e.target.closest('li');
+
     this.setState({
       todos: this.state.todos.map(todo => (todo.id === +id ? { ...todo, completed: !todo.completed } : todo)),
     });
   }
 
-  filterTodo(id) {
+  filterTodo(e) {
+    if (!e.target.matches('.todo-filters > li')) return;
+
+    const id = e.target.textContent.trim();
+
     this.setState({
       currentTodoFilterId: this.state.todoFilter.findIndex(filter => filter === id),
     });

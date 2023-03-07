@@ -1,13 +1,18 @@
-/* eslint-disable class-methods-use-this */
-class TodoFilter {
-  constructor({ filterTodo }) {
-    this.filterTodo = filterTodo;
+import Component from '../core/Component.js';
 
-    this.transmitFilterTodo = this.transmitFilterTodo.bind(this);
+class TodoFilter extends Component {
+  constructor({ filterTodo }) {
+    super();
+
+    this.filterTodo = filterTodo;
   }
 
-  // prettier-ignore
-  render({ todoFilter, currentTodoFilterId }) {
+  render(props) {
+    const { todoFilter, currentTodoFilterId } = props;
+
+    requestAnimationFrame(() => this.bindEvents());
+
+    // prettier-ignore
     return `
       <ul class="todo-filters">
         ${todoFilter.map((filter, idx) => `
@@ -19,15 +24,9 @@ class TodoFilter {
     `;
   }
 
-  transmitFilterTodo(e) {
-    if (!e.target.matches('.todo-filters > li')) return;
-
-    this.filterTodo(e.target.textContent.trim());
-  }
-
-  addEventHandler() {
-    document.querySelector('.todo-filters').removeEventListener('click', this.transmitFilterTodo);
-    document.querySelector('.todo-filters').addEventListener('click', this.transmitFilterTodo);
+  bindEvents() {
+    document.querySelector('.todo-filters').removeEventListener('click', this.filterTodo);
+    document.querySelector('.todo-filters').addEventListener('click', this.filterTodo);
   }
 }
 

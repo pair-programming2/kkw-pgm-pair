@@ -3,6 +3,7 @@ class TodoItem {
   render({ todo }) {
     const { id, content, completed } = todo;
 
+    // prettier-ignore
     return `
       <li id="${id}">
         <input type="checkbox" ${completed ? 'checked' : ''}/>

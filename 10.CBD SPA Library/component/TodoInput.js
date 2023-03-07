@@ -1,34 +1,22 @@
-/* eslint-disable class-methods-use-this */
+import Component from '../core/Component.js';
 
-/*
-  <input props />
-*/
-class TodoInput {
+class TodoInput extends Component {
   constructor({ addTodo }) {
+    super();
+
     this.addTodo = addTodo;
-    this.transmitAddTodo = this.transmitAddTodo.bind(this);
   }
 
   render() {
+    requestAnimationFrame(() => this.bindEvents());
+
     return `<input type="text" class="todo-input" placeholder="Enter todo!" />`;
   }
 
-  transmitAddTodo(e) {
-    if (e.isComposing || e.keyCode === 229) return;
-    if (e.key !== 'Enter' || !e.target.matches('.todo-input')) return;
+  bindEvents() {
+    document.querySelector('.todo-input').removeEventListener('keydown', this.addTodo);
 
-    const content = e.target.value.trim();
-    if (content === '') return;
-
-    e.target.value = '';
-
-    this.addTodo(content);
-  }
-
-  addEventHandler() {
-    document.querySelector('.todo-input').removeEventListener('keydown', this.transmitAddTodo);
-
-    document.querySelector('.todo-input').addEventListener('keydown', this.transmitAddTodo);
+    document.querySelector('.todo-input').addEventListener('keydown', this.addTodo);
   }
 }
 
