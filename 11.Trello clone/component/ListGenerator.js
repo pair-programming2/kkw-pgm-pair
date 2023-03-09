@@ -15,7 +15,7 @@ class ListGenerator extends Component {
           ` <button class="btn-add">+ Add another list</button>` : 
           `
             <form class="form-list">
-              <input class="input-list-title" name="input-list-title" placeholder="Enter list title..." />
+              <input autocomplete="off" class="input-list-title" name="input-list-title" placeholder="Enter list title..." />
               <div class="btn-group">
                 <button class="btn-add-list">Add List</button>
                 <button class="btn-close" type="button">
@@ -31,15 +31,18 @@ class ListGenerator extends Component {
   bindEvents() {
     const { toggleGenerator, addList } = this.props;
 
-    document.querySelector('.input-list-title')?.focus();
+    document.querySelector('.list-generator .input-list-title')?.focus();
 
-    document.querySelector('.input-list-title')?.addEventListener('keydown', e => {
+    document.querySelector('.list-generator .input-list-title')?.addEventListener('keydown', e => {
       if (e.keyCode !== 27) return;
+
       toggleGenerator();
     });
 
     document.querySelector('.form-list')?.addEventListener('submit', e => {
       e.preventDefault();
+      e.stopPropagation();
+
       if (e.target['input-list-title'].value === '') return;
 
       addList(e.target['input-list-title'].value);
@@ -47,7 +50,7 @@ class ListGenerator extends Component {
 
     document.querySelector('.list-generator .btn-add')?.addEventListener('click', toggleGenerator);
 
-    document.querySelector('.btn-close')?.addEventListener('click', toggleGenerator);
+    document.querySelector('.list-generator .btn-close')?.addEventListener('click', toggleGenerator);
   }
 }
 

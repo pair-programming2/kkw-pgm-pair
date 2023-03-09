@@ -3,11 +3,12 @@ import Component from '../core/Component.js';
 
 class Card extends Component {
   render() {
-    const { id, text } = this.props;
+    const { card } = this.props;
+    const { id, title } = card;
 
     return `
-		  <li id="${id}" class="card" draggable="true">${text}</li>
-		`;
+      <li id="${id}" class="card" draggable="true">${title}</li>
+    `;
   }
 }
 
