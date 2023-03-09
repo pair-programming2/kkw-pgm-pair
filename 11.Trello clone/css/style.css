@@ -39,6 +39,7 @@ body {
   display: grid;
   grid-template-columns: repeat(4, minmax(350px, 1fr));
   gap: 1rem;
+  overflow: hidden;
 }
 
 .list {
@@ -49,8 +50,18 @@ body {
   box-shadow: 1px 1px 20px 0 rgba(0, 0, 0, 0.3);
 }
 
-.list .title {
+.list .title__text {
   font-size: 1.2rem;
+}
+
+.list .title__input {
+  border: 0;
+  outline: 0;
+  border-radius: 5px;
+  width: 100%;
+  display: inline-block;
+  padding: 0.5rem 0.3rem;
+  margin-bottom: 0.5rem;
 }
 
 .list .btn-add {
@@ -61,6 +72,47 @@ body {
   outline: 0;
   cursor: pointer;
   font-size: 0.9rem;
+}
+
+.list .form-card {
+  border-radius: 5px;
+  padding: 0.5rem;
+}
+
+.list .input-card-title {
+  border: 0;
+  outline: 0;
+  border-radius: 5px;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.list .btn-group {
+  display: flex;
+}
+
+.list .btn-group > .btn-add-card {
+  border: 0;
+  outline: 0;
+  border-radius: 5px;
+  background: #8687f3;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+.list .btn-group > .btn-close {
+  color: gray;
+  font-size: 1.5rem;
+  font-weight: bold;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 /* Card */
 
